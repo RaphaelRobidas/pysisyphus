@@ -296,7 +296,11 @@ class GrowingString(GrowingChainOfStates):
         # is above or below the desired param_density on the normalized arc.
         #
         # The reparametrization is done in micro cycles, until it is converged.
-        cur_param_density = self.get_cur_param_density()
+        try:
+            cur_param_density = self.get_cur_param_density()
+        except DifferentPrimitivesException:
+            self.reset_geometries(self.images[0])
+            cur_param_density = self.get_cur_param_density()
         self.log(f"Density before reparametrization: {cur_param_density}")
         for i, reparam_image in enumerate(self.images[1:-1], 1):
             if i in climbing_indices:
