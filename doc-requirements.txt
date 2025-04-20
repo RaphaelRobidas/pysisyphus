@@ -12,7 +12,7 @@ babel==2.12.1
     # via sphinx
 bcrypt==4.0.1
     # via paramiko
-certifi==2023.7.22
+certifi==2024.7.4
     # via requests
 cffi==1.15.1
     # via
@@ -30,7 +30,7 @@ cloudpickle==2.2.1
     #   distributed
 contourpy==1.0.7
     # via matplotlib
-cryptography==41.0.4
+cryptography==44.0.1
     # via paramiko
 cycler==0.11.0
     # via matplotlib
@@ -48,7 +48,7 @@ docutils==0.18.1
     #   sphinx-rtd-theme
 fabric==3.1.0
     # via pysisyphus (setup.cfg)
-fonttools==4.39.4
+fonttools==4.43.0
     # via matplotlib
 fsspec==2023.5.0
     # via dask
@@ -56,7 +56,7 @@ future==0.18.3
     # via autograd
 h5py==3.8.0
     # via pysisyphus (setup.cfg)
-idna==3.4
+idna==3.7
     # via requests
 imagesize==1.4.1
     # via sphinx
@@ -68,7 +68,7 @@ importlib-resources==5.12.0
     # via matplotlib
 invoke==2.1.2
     # via fabric
-jinja2==3.1.2
+jinja2==3.1.6
     # via
     #   distributed
     #   pysisyphus (setup.cfg)
@@ -109,11 +109,11 @@ packaging==23.1
     #   distributed
     #   matplotlib
     #   sphinx
-paramiko==3.2.0
+paramiko==3.4.0
     # via fabric
 partd==1.4.0
     # via dask
-pillow==10.0.1
+pillow==10.3.0
     # via matplotlib
 psutil==5.9.5
     # via
@@ -134,11 +134,11 @@ pyyaml==6.0
     #   dask
     #   distributed
     #   pysisyphus (setup.cfg)
-requests==2.31.0
+requests==2.32.0
     # via sphinx
 rmsd==1.5.1
     # via pysisyphus (setup.cfg)
-scikit-learn==1.2.2
+scikit-learn==1.5.0
     # via pysisyphus (setup.cfg)
 scipy==1.10.1
     # via
@@ -186,15 +186,15 @@ toolz==0.12.0
     #   dask
     #   distributed
     #   partd
-tornado==6.3.3
+tornado==6.4.2
     # via distributed
-urllib3==2.0.7
+urllib3==2.2.2
     # via
     #   distributed
     #   requests
 zict==3.0.0
     # via distributed
-zipp==3.15.0
+zipp==3.19.1
     # via
     #   importlib-metadata
     #   importlib-resources

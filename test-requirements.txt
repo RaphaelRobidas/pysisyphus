@@ -26,7 +26,7 @@ contourpy==1.0.7
     # via matplotlib
 coverage[toml]==7.2.7
     # via pytest-cov
-cryptography==41.0.4
+cryptography==44.0.1
     # via paramiko
 cycler==0.11.0
     # via matplotlib
@@ -42,7 +42,7 @@ exceptiongroup==1.1.1
     # via pytest
 fabric==3.1.0
     # via pysisyphus (setup.cfg)
-fonttools==4.39.4
+fonttools==4.43.0
     # via matplotlib
 fsspec==2023.5.0
     # via dask
@@ -60,7 +60,7 @@ iniconfig==2.0.0
     # via pytest
 invoke==2.1.2
     # via fabric
-jinja2==3.1.2
+jinja2==3.1.6
     # via
     #   distributed
     #   pysisyphus (setup.cfg)
@@ -105,11 +105,11 @@ packaging==23.1
     #   distributed
     #   matplotlib
     #   pytest
-paramiko==3.2.0
+paramiko==3.4.0
     # via fabric
 partd==1.4.0
     # via dask
-pillow==10.0.1
+pillow==10.3.0
     # via matplotlib
 pint==0.22
     # via qcelemental
@@ -124,7 +124,7 @@ py-cpuinfo==9.0.0
     # via qcengine
 pycparser==2.21
     # via cffi
-pydantic==1.10.8
+pydantic==1.10.13
     # via
     #   qcelemental
     #   qcengine
@@ -154,7 +154,7 @@ qcengine==0.26.0
     # via pysisyphus (setup.cfg)
 rmsd==1.5.1
     # via pysisyphus (setup.cfg)
-scikit-learn==1.2.2
+scikit-learn==1.5.0
     # via pysisyphus (setup.cfg)
 scipy==1.10.1
     # via
@@ -182,17 +182,17 @@ toolz==0.12.0
     #   dask
     #   distributed
     #   partd
-tornado==6.3.3
+tornado==6.4.2
     # via distributed
 typing-extensions==4.6.3
     # via
     #   pint
     #   pydantic
-urllib3==2.0.7
+urllib3==2.2.2
     # via distributed
 zict==3.0.0
     # via distributed
-zipp==3.15.0
+zipp==3.19.1
     # via
     #   importlib-metadata
     #   importlib-resources
