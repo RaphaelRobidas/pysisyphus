@@ -62,7 +62,7 @@ imagesize==1.4.1
     # via sphinx
 invoke==2.2.0
     # via fabric
-jinja2==3.1.5
+jinja2==3.1.6
     # via
     #   distributed
     #   pysisyphus (setup.cfg)
