@@ -43,11 +43,15 @@ class PySCF(OverlapCalculator):
         nstates=None,
         auxbasis=None,
         keep_chk=True,
-        verbose=0,
-        unrestricted=None,
-        grid_level=3,
+        verbose: int = 5,
+        unrestricted: Optional[bool] = None,
+        grid_level: int = 3,
         pruning="nwchem",
         use_gpu=False,
+        td_triplets=False,
+        ecp="",
+        solvent="",
+        solvation_model="",
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -81,8 +85,12 @@ class PySCF(OverlapCalculator):
         self.out_fn = "pyscf.out"
 
         self.use_gpu = use_gpu
+        self.ecp = ecp
+        self.solvent = solvent
+        self.solvation_model = solvation_model
 
         lib.num_threads(self.pal)
+        self.mem = 2000
 
     @staticmethod
     def geom_from_fn(fn, **kwargs):
@@ -91,7 +99,7 @@ class PySCF(OverlapCalculator):
         return geom
 
     def set_scf_params(self, mf):
-        mf.conv_tol = 1e-8
+        mf.conv_tol = 1e-6
         mf.max_cycle = 150
 
     def build_grid(self, mf):
@@ -144,6 +152,7 @@ class PySCF(OverlapCalculator):
         mol.spin = self.mult - 1
         mol.symmetry = False
         mol.verbose = self.verbose
+        mol.ecp = self.ecp
         # Personally, I patched mole.py so it doesn't print
         # messages regarding the output-file for verbose > QUIET.
         # Just uncomment the lines after
@@ -215,7 +224,27 @@ class PySCF(OverlapCalculator):
 
         mol = self.prepare_input(atoms, coords)
         mf = self.run(mol, point_charges=point_charges)
-        H = mf.Hessian().kernel()
+        Hess = mf.Hessian()#.kernel()
+        '''
+        import types
+
+        from pyscf.hessian.rhf import solve_mo1
+        # Gaussian use SG1 grids for CPHF
+        def solve_mo1_sg1(self, mo_energy, mo_coeff, mo_occ, h1ao_or_chkfile,
+                    fx=None, atmlst=None, max_memory=4000, verbose=None):
+            self.base.grids.atom_grid = (35,110)
+            self.base.grids.build()
+            mo1 = solve_mo1(self.base, mo_energy, mo_coeff, mo_occ, h1ao_or_chkfile,
+                            fx, atmlst, max_memory, verbose)
+            self.base.grids.atom_grid = (35,110)
+            self.base.grids.build()
+            return mo1
+
+        # patching hessian object hobj
+        Hess.solve_mo1 = types.MethodType(solve_mo1_sg1, Hess)
+        '''
+
+        H = Hess.kernel()
 
         # The returned hessian is 4d ... ok. This probably serves a purpose
         # that I don't understand. We transform H to a nice, simple 2d array.
@@ -259,6 +288,9 @@ class PySCF(OverlapCalculator):
                         f"Added {len(point_charges)} point charges with "
                         f"sum(q)={sum(point_charges[:,3]):.4f}."
                     )
+                if self.solvent != "":
+                    mf = getattr(mf, self.solvation_model)()
+                    mf.with_solvent.solvent = self.solvent
             else:
                 mf = self.get_driver(step, mf=prev_mf)  # noqa: F821
 
