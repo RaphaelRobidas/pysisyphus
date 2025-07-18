@@ -243,15 +243,8 @@ class XTB(Calculator):
         return self.load_wavefunction_from_file(self.molden, xtb_nuc_charges=True)
 
     def run_calculation(self, atoms, coords, **prepare_kwargs):
-        self.prepare_input(atoms, coords, "calculation", **prepare_kwargs)
-        inp = self.prepare_coords(atoms, coords)
-        kwargs = {
-            "calc": "calc",
-            "env": self.get_pal_env(),
-        }
-        energy = self.run(inp, **kwargs)
-        results = {"energy": energy}
-        return results
+        # This method used to ignore all options, it will now reuse the `get_energy` method, which works as expected
+        return self.get_energy(atoms, coords, **prepare_kwargs)
 
     def run_topo(self, atoms, coords):
         inp = self.prepare_coords(atoms, coords)
