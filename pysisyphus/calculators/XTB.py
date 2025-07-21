@@ -67,7 +67,7 @@ class XTB(Calculator):
             Integer controlling the update interval of the GFNFF topology update.
             If supplied, the topolgy will be recreated every N-th calculation.
         mem : int
-            Mememory per core in MB.
+            Memory per core in MB.
         quiet : bool, optional
             Suppress creation of log files.
         wavefunction_dump : bool
@@ -136,26 +136,32 @@ class XTB(Calculator):
         coords = coords * BOHR2ANG
         return make_xyz_str(atoms, coords.reshape((-1, 3)))
 
+    @staticmethod
+    def format_xcontrol(options):
+        inp = ""
+        for section, entries in sorted(options.items(), key=lambda x: x[0]):
+            inp += f"${section}\n"
+            for key, _val in sorted(entries.items(), key=lambda x: x[0]):
+                if isinstance(_val, bool):
+                    val = "true" if _val else "false"
+                else:
+                    val = _val
+                inp += f"    {key}={val}\n"
+            inp += "$end\n"
+
+        return textwrap.dedent(inp.strip())
+
     def prepare_input(self, atoms, coords, calc_type, point_charges=None):
         path = self.prepare_path(use_in_run=True)
 
-        xcontrol_str = """
-        $write
-            json=true
-        $end
-        """
+        xcontrol = {"write": {"json": True}}
 
         if point_charges is not None:
             pc_fn = self.make_fn("pointcharges_inp.pc")
             save_orca_pc_file(point_charges, pc_fn, hardness=99)
-            xcontrol_str += f"""
-            $embedding
-               input={pc_fn}
-               interface=orca
-            $end
-            """
+            xcontrol["embedding"] = {"input": pc_fn, "interface": "orca"}
 
-        xcontrol_str = textwrap.dedent(xcontrol_str.strip())
+        xcontrol_str = self.format_xcontrol(xcontrol)
         with open(path / "xcontrol", "w") as handle:
             handle.write(xcontrol_str)
 
@@ -296,23 +302,23 @@ class XTB(Calculator):
             mdrestart_str = self.get_mdrestart_str(coords3d, velocities3d)
             self.write_mdrestart(path, mdrestart_str)
             restart = "true"
-        md_str = textwrap.dedent(
-            """
-        $md
-            hmass=1
-            dump={dump}  # fs
-            nvt=false
-            restart={restart}
-            time={time}  # ps
-            shake=0
-            step={step}  # fs
-            velo=false
-        $end"""
-        )
-        t_ps = t / 1000
-        md_str_fmt = md_str.format(restart=restart, time=t_ps, step=dt, dump=dump)
+
+        options = {
+            "md": {
+                "hmass": 1,
+                "dump": dump,  # fs
+                "nvt": False,
+                "restart": restart,
+                "time": t / 1000,  # ps
+                "shake": 0,
+                "step": dt,  # fs
+                "velo": False,
+            }
+        }
+
+        md_str = self.format_xcontrol(options)
         with open(path / "xcontrol", "w") as handle:
-            handle.write(md_str_fmt)
+            handle.write(md_str)
         inp = self.prepare_coords(atoms, coords)
 
         add_args = self.prepare_add_args() + ["--input", "xcontrol", "--md"]

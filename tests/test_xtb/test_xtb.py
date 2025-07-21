@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+import textwrap
 
 from pysisyphus.calculators import XTB
 from pysisyphus.io.molden import get_xtb_nuc_charges
@@ -106,3 +107,22 @@ def test_xtb_nuc_charges():
     mod_charges = get_xtb_nuc_charges(all_atoms)
     ecp_electrons = get_xtb_nuc_charges(all_atoms, as_ecp_electrons=True)
     np.testing.assert_allclose(mod_charges + ecp_electrons, atomic_nums)
+
+def test_xtb_format_xcontrol_one_group():
+    expected = textwrap.dedent("""
+    $write
+        json=true
+    $end
+    """).strip()
+    assert XTB.format_xcontrol({"write": {"json": True}}) == expected
+
+def test_xtb_format_xcontrol_two_groups():
+    expected = textwrap.dedent("""
+    $md
+        restart=true
+    $end
+    $write
+        json=true
+    $end
+    """).strip()
+    assert XTB.format_xcontrol({"write": {"json": True}, "md": {"restart": "true"}}) == expected
