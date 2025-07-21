@@ -34,6 +34,7 @@ class XTB(Calculator):
         etemp=None,
         retry_etemp=None,
         restart=False,
+        xtb_options={},
         topo=None,
         topo_update=None,
         quiet=False,
@@ -83,6 +84,7 @@ class XTB(Calculator):
         self.etemp = etemp
         self.retry_etemp = retry_etemp
         self.restart = restart
+        self.xtb_options = xtb_options
         if self.etemp is not None:
             assert (
                 self.retry_etemp is None
@@ -160,6 +162,8 @@ class XTB(Calculator):
             pc_fn = self.make_fn("pointcharges_inp.pc")
             save_orca_pc_file(point_charges, pc_fn, hardness=99)
             xcontrol["embedding"] = {"input": pc_fn, "interface": "orca"}
+
+        xcontrol.update(self.xtb_options)
 
         xcontrol_str = self.format_xcontrol(xcontrol)
         with open(path / "xcontrol", "w") as handle:
@@ -315,6 +319,8 @@ class XTB(Calculator):
                 "velo": False,
             }
         }
+
+        options.update(self.xtb_options)
 
         md_str = self.format_xcontrol(options)
         with open(path / "xcontrol", "w") as handle:
